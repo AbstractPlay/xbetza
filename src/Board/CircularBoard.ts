@@ -41,14 +41,14 @@ export class CircularBoard extends BaseBoard {
     this.radius = options.radius ?? Math.min(w, h) / 2;
   }
 
-public get geometryContext(): GeometryContext {
-  return {
-    boardWidth: this.width,
-    boardHeight: this.height,
-    wrapFiles: this.wrapX,
-    wrapRanks: this.wrapY,
-  };
-}
+  public get geometryContext(): GeometryContext {
+    return {
+      boardWidth: this.width,
+      boardHeight: this.height,
+      wrapFiles: this.wrapX,
+      wrapRanks: this.wrapY,
+    };
+  }
 
   /**
    * Normalize coordinates according to wrapX / wrapY.

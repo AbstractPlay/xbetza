@@ -1,7 +1,6 @@
 import type { GeometryContext } from "../Geometry";
 
 export class BaseBoard {
-
   public get geometryContext(): GeometryContext {
     throw new Error("Board must implement context getter");
   }
@@ -13,5 +12,4 @@ export class BaseBoard {
   public get height(): number {
     throw new Error("Board must implement height getter");
   }
-
 }

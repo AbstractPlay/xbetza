@@ -55,13 +55,13 @@ export class HexBoard extends BaseBoard {
   }
 
   public get geometryContext(): GeometryContext {
-  return {
-    boardWidth: this.width,
-    boardHeight: this.height,
-    wrapFiles: this.wrapQ,
-    wrapRanks: this.wrapR,
-  };
-    }
+    return {
+      boardWidth: this.width,
+      boardHeight: this.height,
+      wrapFiles: this.wrapQ,
+      wrapRanks: this.wrapR,
+    };
+  }
 
   /**
    * Normalize axial coordinates according to wrapQ / wrapR.
