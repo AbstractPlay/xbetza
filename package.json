@@ -5,15 +5,12 @@
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
-    "build": "npm run json2ts && npm run build-ts && npm run lint",
+    "build": "npm run build-ts && npm run lint",
     "build-ts": "tsc && npm pack",
-    "test0": "mocha -r ts-node/register test/games/omny.test.ts",
     "test": "mocha -r ts-node/register test/**/*.test.ts",
     "lint": "npx eslint .",
-    "dist-dev": "rimraf dist && webpack",
-    "dist-prod": "rimraf dist && webpack --mode=production",
-    "full-dev": "npm run test && npm run build && npm run dist-dev && npm run deploy",
-    "full-prod": "npm run test && npm run build && npm run dist-prod && npm run deploy",
+    "dist": "rimraf dist && webpack --mode=production",
+    "full": "npm run test && npm run build && npm run dist",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "repository": {

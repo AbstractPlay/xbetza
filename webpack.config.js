@@ -18,9 +18,9 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ]
   },
   output: {
-    filename: 'APGames.js',
+    filename: 'APBetza.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'APGames',
+    library: 'APBetza',
     libraryTarget: 'var'
   }
 };
