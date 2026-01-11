@@ -1,7 +1,6 @@
 import { expect } from "chai";
-import { classifyGeometry } from "../src/geometry";
-import { DIRECTION_MAP } from "../src/geometry";
-import { expandAtom } from "../src/expandAtom";
+import { classifyGeometry, DIRECTION_MAP } from "../src/Geometry";
+import { expandAtom } from "../src/Piece/expandAtom";
 
 function mods(extra = {}) {
   return {

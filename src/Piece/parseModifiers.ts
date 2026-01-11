@@ -1,4 +1,4 @@
-import type { Modifiers } from "./types";
+import type { Modifiers } from "../types";
 
 export function parseModifiers(raw: string): Modifiers {
   const mods: Modifiers = {};

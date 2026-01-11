@@ -36,21 +36,22 @@ export function handleCaptureThenLeap(
   atom: MoveAtom,
   board: BoardState,
 ): PathSquare[] {
+  if (!atom.deltasConcrete) return [];
+
   // 1. Find the first enemy square in the path
   const capture = path.find((sq) => sq.sq?.kind === "enemy");
-  if (!capture) return []; // no capture → no second leap
+  if (!capture) return [];
 
   const results: PathSquare[] = [];
 
-  // 2. From the capture square, perform a normal leap using atom.deltas
-  for (const [dx, dy] of atom.deltas) {
-    const nx = capture.x + dx;
-    const ny = capture.y + dy;
+  // 2. From the capture square, perform a normal leap using concrete deltas
+  for (const { df, dr } of atom.deltasConcrete) {
+    const nx = capture.x + df;
+    const ny = capture.y + dr;
 
     const sq = board.get(nx, ny);
-    if (!sq) continue; // off board
+    if (!sq) continue;
 
-    // must obey moveOnly / captureOnly semantics
     if (sq.kind === "empty" && !atom.captureOnly) {
       results.push({ x: nx, y: ny, sq });
     }

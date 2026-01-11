@@ -8,6 +8,8 @@ export function generateLeapMoves(
   board: BoardState,
   out: Array<[number, number]>,
 ) {
+  if (!atom.deltasConcrete) return; // geometry not applied
+
   const targets = buildLeapTargets(atom, x, y);
   let annotated = annotateLeapTargets(targets, board);
   annotated = applyLeapModifiers(annotated, atom, board);
@@ -19,7 +21,7 @@ function buildLeapTargets(
   x: number,
   y: number,
 ): Array<[number, number]> {
-  return atom.deltas.map(([dx, dy]) => [x + dx, y + dy]);
+  return atom.deltasConcrete!.map(({ df, dr }) => [x + df, y + dr]);
 }
 
 function annotateLeapTargets(

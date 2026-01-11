@@ -8,6 +8,8 @@ export function generateSlideMoves(
   board: BoardState,
   out: Array<[number, number]>,
 ) {
+  if (!atom.deltasConcrete) return; // geometry not applied
+
   const path = buildRay(atom, x, y, board);
   let annotated = annotateRay(path, board);
 
@@ -31,12 +33,12 @@ function buildRay(
 ): Array<[number, number]> {
   const ray: Array<[number, number]> = [];
 
-  for (const [dx, dy] of atom.deltas) {
+  for (const { df, dr } of atom.deltasConcrete!) {
     let step = 1;
 
     while (step <= atom.maxSteps) {
-      const nx = x + dx * step;
-      const ny = y + dy * step;
+      const nx = x + df * step;
+      const ny = y + dr * step;
 
       // stop when leaving the board
       if (!board.get(nx, ny)) break;

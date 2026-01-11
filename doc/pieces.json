@@ -1,0 +1,43 @@
+{
+  "pieces": [
+    { "id": "king",       "xbetza": "WF" },
+    { "id": "queen",      "xbetza": "WF" },
+    { "id": "rook",       "xbetza": "W" },
+    { "id": "bishop",     "xbetza": "F" },
+    { "id": "knight",     "xbetza": "N" },
+    { "id": "pawn",       "xbetza": "fmWcF" },
+
+    { "id": "wazir",      "xbetza": "W" },
+    { "id": "ferz",       "xbetza": "F" },
+    { "id": "dabbaba",    "xbetza": "D" },
+    { "id": "alfil",      "xbetza": "A" },
+    { "id": "elephant",   "xbetza": "E" },
+    { "id": "camel",      "xbetza": "C" },
+    { "id": "zebra",      "xbetza": "Z" },
+    { "id": "giraffe",    "xbetza": "G" },
+
+    { "id": "nightrider", "xbetza": "sN" },
+    { "id": "rookrider",  "xbetza": "sW" },
+    { "id": "bishrider",  "xbetza": "sF" },
+    { "id": "queenrider", "xbetza": "sWF" },
+
+    { "id": "amazon",     "xbetza": "WFN" },
+    { "id": "empress",    "xbetza": "WN" },
+    { "id": "princess",   "xbetza": "FN" },
+
+    { "id": "cannon",     "xbetza": "jW" },
+    { "id": "pao",        "xbetza": "jW" },
+    { "id": "vao",        "xbetza": "jF" },
+    { "id": "leo",        "xbetza": "jWF" },
+
+    { "id": "squirrel",   "xbetza": "S" },
+
+    { "id": "archbishop", "xbetza": "FN" },
+    { "id": "chancellor", "xbetza": "WN" },
+
+    { "id": "gryphon",    "xbetza": "FfW" },
+    { "id": "aanca",      "xbetza": "WfF" },
+
+    { "id": "dragon",     "xbetza": "sWFN" }
+  ]
+}

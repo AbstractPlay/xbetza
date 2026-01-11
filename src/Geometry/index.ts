@@ -1,4 +1,9 @@
-import type { Direction } from "./types";
+export { GeometryId, BoardCoordinate, GeometryContext, Geometry } from "./Geometry";
+export { SquareRectGeometry } from "./SquareRectGeometry";
+export { HexAxialGeometry } from "./HexAxialGeometry";
+
+import type { Direction, MoveAtom } from "../types";
+import { GeometryContext, Geometry } from "./Geometry";
 
 export function classifyGeometry(symbol: string): "slide" | "leap" | "hop" {
   // Sliding pieces
@@ -16,6 +21,19 @@ export function classifyGeometry(symbol: string): "slide" | "leap" | "hop" {
   // Fallback: lowercase = hop, uppercase = leap
   if (symbol === symbol.toLowerCase()) return "hop";
   return "leap";
+}
+
+export function applyGeometry(
+  atom: MoveAtom,
+  geometry: Geometry,
+  ctx: GeometryContext
+): MoveAtom {
+  return {
+    ...atom,
+    deltasConcrete: atom.deltasAbstract.flatMap(([dx, dy]) =>
+      geometry.interpretVector(dx, dy, ctx)
+    ),
+  };
 }
 
 export const DIRECTION_MAP: Record<string, Array<Direction>> = {

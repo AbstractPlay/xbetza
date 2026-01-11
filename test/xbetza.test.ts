@@ -1,14 +1,11 @@
 import "mocha";
 import { expect } from "chai";
-import { parseXBetza } from "../src/parseXBetza";
-import { expandAtom } from "../src/expandAtom";
+import { parseXBetza } from "../src/Piece/parseXBetza";
+import { expandAtom } from "../src/Piece/expandAtom";
 import { generateMoves } from "../src/generateMoves";
-import { classifyGeometry, DIRECTION_MAP } from "../src/geometry";
-
-import {
-  BoardState,
-  SquareState
-} from "../src/types";
+import { classifyGeometry, DIRECTION_MAP } from "../src/Geometry";
+import { Piece } from "../src/Piece";
+import { boardFromGrid, squareCtx } from "./helpers";
 
 //
 // Utility for building modifier sets
@@ -37,26 +34,6 @@ function mods(extra = {}) {
 }
 
 //
-// Mock board
-//
-function boardFromGrid(grid: string[]): BoardState {
-  return {
-    width: grid[0].length,
-    height: grid.length,
-    get(x: number, y: number): SquareState|undefined {
-      if (y < 0 || y >= grid.length) return undefined;
-      if (x < 0 || x >= grid[0].length) return undefined;
-
-      const c = grid[y][x];
-      if (c === ".") return { kind: "empty" };
-      if (c === "F") return { kind: "friendly" };
-      if (c === "E") return { kind: "enemy" };
-      return undefined;
-    }
-  };
-}
-
-//
 // ─────────────────────────────────────────────
 //   ATOM EXPANSION TESTS
 // ─────────────────────────────────────────────
@@ -67,65 +44,65 @@ describe("expandAtom – atoms", () => {
   it("expands W", () => {
     const a = expandAtom("W", mods());
     expect(a.kind).to.equal("leap");
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["W"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["W"]);
     expect(a.maxSteps).to.equal(1);
   });
 
   it("expands F", () => {
     const a = expandAtom("F", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["F"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["F"]);
   });
 
   it("expands N", () => {
     const a = expandAtom("N", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["N"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["N"]);
   });
 
   it("expands D", () => {
     const a = expandAtom("D", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["D"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["D"]);
   });
 
   it("expands A", () => {
     const a = expandAtom("A", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["A"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["A"]);
   });
 
   it("expands E", () => {
     const a = expandAtom("E", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["E"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["E"]);
   });
 
   it("expands C", () => {
     const a = expandAtom("C", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["C"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["C"]);
   });
 
   it("expands Z", () => {
     const a = expandAtom("Z", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["Z"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["Z"]);
   });
 
   it("expands H (nightrider)", () => {
     const a = expandAtom("H", mods());
     expect(a.kind).to.equal("slide");
     expect(a.maxSteps).to.equal(Infinity);
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["N"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["N"]);
   });
 
   it("expands G (giraffe)", () => {
     const a = expandAtom("G", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["G"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["G"]);
   });
 
   it("expands S (squirrel)", () => {
     const a = expandAtom("S", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["S"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["S"]);
   });
 
   it("expands P (pawn)", () => {
     const a = expandAtom("P", mods());
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["P"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["P"]);
   });
 
   it("throws on unknown atom", () => {
@@ -220,7 +197,7 @@ describe("expandAtom – modifiers", () => {
   it("againRider converts leap → slide but keeps deltas", () => {
     const a = expandAtom("N", mods({ againRider: true }));
     expect(a.kind).to.equal("slide");
-    expect(a.deltas).to.deep.equal(DIRECTION_MAP["N"]);
+    expect(a.deltasAbstract).to.deep.equal(DIRECTION_MAP["N"]);
   });
 
   it("grasshopper forces hop geometry even on slide pieces", () => {
@@ -240,7 +217,7 @@ describe("parseXBetza", () => {
 
   it("parses single atom", () => {
     const a = parseXBetza("N");
-    expect(a[0].deltas).to.deep.equal(DIRECTION_MAP["N"]);
+    expect(a[0].deltasAbstract).to.deep.equal(DIRECTION_MAP["N"]);
   });
 
   it("parses multiple atoms", () => {
@@ -284,7 +261,7 @@ describe("parseXBetza", () => {
 
 //
 // ─────────────────────────────────────────────
-//   MOVE GENERATOR TESTS
+//   MOVE GENERATOR TESTS — LEAP
 // ─────────────────────────────────────────────
 //
 
@@ -298,7 +275,8 @@ describe("moveGenerator – leap", () => {
       ".....",
       ".....",
     ]);
-    const piece = { atoms: parseXBetza("N") };
+
+    const piece = new Piece("N", "N", squareCtx);
     const moves = generateMoves(piece, 2, 2, board);
 
     expect(moves).to.have.length(8);
@@ -311,49 +289,52 @@ describe("moveGenerator – leap", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("oN") };
+    const piece = new Piece("oN", "oN", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
     expect(moves).to.have.length(0);
   });
 
-it("captureThenLeap works", () => {
-  const board = boardFromGrid([
-    "........", // y = 0
-    "........", // y = 1
-    "........", // y = 2
-    "...F....", // y = 3, F at (3,3)
-    "........", // y = 4
-    "....E...", // y = 5, E at (4,5)
-    "........", // y = 6
-    "........", // y = 7
-  ]);
+  it("captureThenLeap works", () => {
+    const board = boardFromGrid([
+      "........",
+      "........",
+      "........",
+      "...F....",
+      "........",
+      "....E...",
+      "........",
+      "........",
+    ]);
 
-  // Knight at (3,3)
-  const piece = { atoms: parseXBetza("yN") };
-  const moves = generateMoves(piece, 3, 3, board);
+    const piece = new Piece("yN", "yN", squareCtx);
+    const moves = generateMoves(piece, 3, 3, board);
 
-  // Knight captures enemy at (4,5), then leaps again to (5,7)
-  // (3,3) -> (4,5): (+1, +2)  knight move
-  // (4,5) -> (5,7): (+1, +2)  knight move
-  expect(moves).to.deep.include([5, 7]);
-});
+    expect(moves).to.deep.include([5, 7]);
+  });
 
   it("geometry: leap pieces ignore blocking pieces", () => {
     const board = boardFromGrid([
-        ".....",
-        "..E..",
-        "..F..",
-        "..E..",
-        "....."
+      ".....",
+      "..E..",
+      "..F..",
+      "..E..",
+      "....."
     ]);
 
-    const piece = { atoms: parseXBetza("N") };
+    const piece = new Piece("N", "N", squareCtx);
     const moves = generateMoves(piece, 2, 2, board);
 
     expect(moves).to.have.length(8);
   });
 });
+
+
+//
+// ─────────────────────────────────────────────
+//   SLIDE
+// ─────────────────────────────────────────────
+//
 
 describe("moveGenerator – slide", () => {
 
@@ -364,7 +345,7 @@ describe("moveGenerator – slide", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("R") };
+    const piece = new Piece("R", "R", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
     expect(moves).to.have.length(4);
@@ -377,7 +358,7 @@ describe("moveGenerator – slide", () => {
       ".E."
     ]);
 
-    const piece = { atoms: parseXBetza("uR") };
+    const piece = new Piece("uR", "uR", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
     expect(moves).to.deep.include([1, 0]);
@@ -392,11 +373,11 @@ describe("moveGenerator – slide", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("tR") };
+    const piece = new Piece("tR", "tR", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
-    expect(moves).to.deep.include([1, 2]); // capture
-    expect(moves).to.deep.include([1, 3]); // continue
+    expect(moves).to.deep.include([1, 2]);
+    expect(moves).to.deep.include([1, 3]);
   });
 
   it("geometry: slide pieces stop at board edge", () => {
@@ -406,13 +387,20 @@ describe("moveGenerator – slide", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("R") };
+    const piece = new Piece("R", "R", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
     expect(moves).to.deep.include([1, 0]);
     expect(moves).to.deep.include([1, 2]);
   });
 });
+
+
+//
+// ─────────────────────────────────────────────
+//   HOP
+// ─────────────────────────────────────────────
+//
 
 describe("moveGenerator – hop", () => {
 
@@ -424,7 +412,7 @@ describe("moveGenerator – hop", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("gW") };
+    const piece = new Piece("gW", "gW", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
     expect(moves).to.deep.include([1, 3]);
@@ -438,10 +426,9 @@ describe("moveGenerator – hop", () => {
       "..."
     ]);
 
-    const piece = { atoms: parseXBetza("gW") };
+    const piece = new Piece("gW", "gW", squareCtx);
     const moves = generateMoves(piece, 1, 1, board);
 
-    // No hurdle → no hop
     expect(moves).to.deep.equal([]);
   });
 });

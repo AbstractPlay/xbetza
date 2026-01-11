@@ -20,16 +20,18 @@ yarn add @abstractplay/xbetza
 import { parseXBetza, generateMoves } from "@abstractplay/xbetza";
 
 const board = boardFromGrid([
-  "...",
-  ".F.",
-  "...",
+  ".....",
+  ".....",
+  "..F..",
+  ".....",
+  ".....",
 ]);
 
 const piece = parseXBetza("N"); // Knight
-const moves = generateMoves(piece, 1, 1, board);
+const moves = generateMoves(piece, 2, 2, board);
 
 console.log(moves);
-// → [ [0,3], [2,3], [3,2], ... ]
+// → [ [ 3, 4 ], [ 4, 3 ], [ 4, 1 ], [ 3, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 3 ], [ 1, 4 ] ]
 ```
 
 That’s the entire workflow:
@@ -117,8 +119,8 @@ moves.forEach(([x, y]) => console.log(x, y));
 
 ## Supported Movement Types (Atoms)
 
-| Atom | Name          | Step Pattern        | Type            |
-|------|---------------|----------------------|------------------|
+| Atom | Name          | Step Pattern         | Type            |
+|------|---------------|----------------------|-----------------|
 | W    | Wazir         | (1,0)                | Leaper          |
 | F    | Ferz          | (1,1)                | Leaper          |
 | D    | Dabbaba       | (2,0)                | Leaper          |
@@ -139,7 +141,7 @@ moves.forEach(([x, y]) => console.log(x, y));
 
 ## Supported Modifiers
 
-| Modifier | Meaning               |
+| Modifier | Meaning                |
 |----------|------------------------|
 | t        | take and continue      |
 | u        | unblockable            |
@@ -163,8 +165,8 @@ parseXBetza("pgB"); // clear-path grasshopper bishop
 
 ## Atom × Modifier Compatibility Matrix
 
-| Modifier | Leapers (W,F,N,…) | Riders (R,B,Q) | Hoppers (g,h) | Notes |
-|----------|--------------------|----------------|---------------|--------|
+| Modifier                   | Leapers (W,F,N,…)  | Riders (R,B,Q) | Hoppers (g,h) | Notes  |
+|----------------------------|--------------------|----------------|---------------|--------|
 | t (take & continue) | ✔️ | ✔️ | ✔️ | Works for any capturing move |
 | u (unblockable) | ✔️ | ⚠️ | — | Riders only unblockable if range-limited |
 | o (must capture first) | ✔️ | ✔️ | ✔️ | Applies to any move with a capture option |
@@ -178,6 +180,7 @@ parseXBetza("pgB"); // clear-path grasshopper bishop
 | c (capture‑only) | ✔️ | ✔️ | ✔️ | Universal |
 
 Legend:
+
 - ✔️ fully supported
 - ⚠️ conditionally meaningful (depends on range, hop, or capture rules)
 - — not meaningful for that atom type

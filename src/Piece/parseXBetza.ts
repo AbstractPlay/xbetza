@@ -1,4 +1,4 @@
-import type { MoveAtom, Direction } from "./types";
+import type { MoveAtom, Direction } from "../types";
 import { expandAtom } from "./expandAtom";
 
 export function parseXBetza(x: string): MoveAtom[] {

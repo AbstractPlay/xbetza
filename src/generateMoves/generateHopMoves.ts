@@ -8,10 +8,12 @@ export function generateHopMoves(
   board: BoardState,
   out: Array<[number, number]>,
 ) {
-  for (const [dx, dy] of atom.deltas) {
-    const ray = buildHopRayDirection(atom, x, y, dx, dy, board);
+  if (!atom.deltasConcrete) return; // geometry not applied
+
+  for (const { df, dr } of atom.deltasConcrete) {
+    const ray = buildHopRayDirection(atom, x, y, df, dr, board);
     const annotated = annotateHopRay(ray, board);
-    let landing = handleHopLogic(annotated, atom, board, dx, dy);
+    let landing = handleHopLogic(annotated, atom, board, df, dr);
 
     if (atom.captureThenLeap) {
       landing = handleCaptureThenLeap(landing, atom, board);
@@ -25,18 +27,18 @@ function buildHopRayDirection(
   atom: MoveAtom,
   x: number,
   y: number,
-  dx: number,
-  dy: number,
+  df: number,
+  dr: number,
   board: BoardState,
 ): Array<[number, number]> {
   const ray: Array<[number, number]> = [];
   let step = 1;
 
   while (step <= atom.maxSteps) {
-    const nx = x + dx * step;
-    const ny = y + dy * step;
+    const nx = x + df * step;
+    const ny = y + dr * step;
 
-    if (!board.get(nx, ny)) break; // stop at board edge
+    if (!board.get(nx, ny)) break; // off board
 
     ray.push([nx, ny]);
     step++;
@@ -56,16 +58,16 @@ function handleHopLogic(
   path: PathSquare[],
   atom: MoveAtom,
   board: BoardState,
-  dx: number,
-  dy: number,
+  df: number,
+  dr: number,
 ): PathSquare[] {
   // 1. Find the hurdle
   const hurdle = path.find((sq) => sq.sq && sq.sq.kind !== "empty");
   if (!hurdle) return [];
 
   // 2. Landing square is one step beyond the hurdle
-  const lx = hurdle.x + dx;
-  const ly = hurdle.y + dy;
+  const lx = hurdle.x + df;
+  const ly = hurdle.y + dr;
 
   const landingSq = board.get(lx, ly);
   if (!landingSq) return []; // off board

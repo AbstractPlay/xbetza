@@ -1,5 +1,5 @@
-import type { Direction, MoveAtom } from "./types";
-import { classifyGeometry, DIRECTION_MAP } from "./geometry"; // you already have these
+import type { Direction, MoveAtom } from "../types";
+import { classifyGeometry, DIRECTION_MAP } from "../Geometry"; // you already have these
 
 export function expandAtom(
   atom: string,
@@ -33,7 +33,7 @@ export function expandAtom(
   //
   const base: MoveAtom = {
     kind: classifyGeometry(atom),
-    deltas: DIRECTION_MAP[atom] ?? [],
+    deltasAbstract: DIRECTION_MAP[atom] ?? [],
     maxSteps: classifyGeometry(atom) === "slide" ? Infinity : 1,
 
     hopCount: mods.hopCount,
