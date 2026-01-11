@@ -1,0 +1,46 @@
+GEOMETRY
+────────
+z   → zig‑zag (alternate deltas)
+g   → hopper ray
+h   → locust ray
+y   → second‑leap geometry (after capture)
+
+ANNOTATION
+──────────
+(no modifiers act here)
+
+PATH FILTERING
+──────────────
+p   → stop at first non‑empty (clear path)
+o   → remove empties before first capture
+x   → remove enemy squares
+c   → remove empty squares
+m   → remove enemy squares
+
+CAPTURE LOGIC
+─────────────
+o   → must capture first
+x   → must not capture first
+c   → capture only
+m   → move only
+y   → must capture first (to trigger leap)
+g   → capture on landing
+h   → capture on hurdle
+
+CONTINUATION
+────────────
+t   → continue sliding after capture
+u   → ignore blockers (continue past enemy/friendly)
+y   → continuation is a leap, not a slide
+g   → no continuation
+h   → no continuation
+
+LANDING RULES
+─────────────
+o   → landing must be capture
+x   → landing must be empty
+c   → landing must be enemy
+m   → landing must be empty
+y   → landing must obey move/capture rules
+g   → landing must obey move/capture rules
+h   → landing is always capture

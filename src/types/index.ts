@@ -1,7 +1,13 @@
+export type Geometry = "square" | "hex" | string;
+
+export type Delta = [number, number];
+export type DeltaSet = Delta[];
+
 export type Piece = {
   id: string;
-  name: string;
   xbetza: string;
+  name?: string;
+  geometry?: Geometry;
 };
 
 export type ParsedPiece = Piece & {
@@ -10,125 +16,56 @@ export type ParsedPiece = Piece & {
 
 export type Direction = [number, number];
 
-// Orthogonal
-export const ORTHO: Direction[] = [
-  [1, 0],
-  [-1, 0],
-  [0, 1],
-  [0, -1],
-];
+export type Orthogonal = "N" | "E" | "S" | "W";
+export type Diagonal = "NE" | "SE" | "SW" | "NW";
 
-// Diagonal
-export const DIAG: Direction[] = [
-  [1, 1],
-  [1, -1],
-  [-1, 1],
-  [-1, -1],
-];
+export type SlideSymbol =
+  | "R" // rook
+  | "B" // bishop
+  | "Q" // queen
+  | "W" // wazir (orthogonal step)
+  | "F" // ferz (diagonal step)
+  | "D" // dabbaba slide? (rare but allowed)
+  | "A" // alfil slide? (rare but allowed)
+  | string; // custom slide
 
-// Knight (1,2)
-export const KNIGHT: Direction[] = [
-  [1, 2],
-  [2, 1],
-  [2, -1],
-  [1, -2],
-  [-1, 2],
-  [-2, 1],
-  [-2, -1],
-  [-1, -2],
-];
+export type LeapSymbol =
+  | "N" // knight
+  | "D" // dabbaba
+  | "A" // alfil
+  | "H" // camel
+  | string; // custom leap
 
-// Dabbaba (2,0)
-export const DABBABA: Direction[] = [
-  [2, 0],
-  [-2, 0],
-  [0, 2],
-  [0, -2],
-];
+export type HopSymbol =
+  | "g" // grasshopper
+  | "h" // locust
+  | string; // custom hop
 
-// Alfil (2,2)
-export const ALFIL: Direction[] = [
-  [2, 2],
-  [2, -2],
-  [-2, 2],
-  [-2, -2],
-];
-
-// Elephant (3,3)
-export const ELEPHANT: Direction[] = [
-  [3, 3],
-  [3, -3],
-  [-3, 3],
-  [-3, -3],
-];
-
-// Camel (1,3)
-export const CAMEL: Direction[] = [
-  [1, 3],
-  [3, 1],
-  [3, -1],
-  [1, -3],
-  [-1, 3],
-  [-3, 1],
-  [-3, -1],
-  [-1, -3],
-];
-
-// Zebra (2,3)
-export const ZEBRA: Direction[] = [
-  [2, 3],
-  [3, 2],
-  [3, -2],
-  [2, -3],
-  [-2, 3],
-  [-3, 2],
-  [-3, -2],
-  [-2, -3],
-];
-
-// Giraffe (1,4)
-export const GIRAFFE: Direction[] = [
-  [1, 4],
-  [4, 1],
-  [4, -1],
-  [1, -4],
-  [-1, 4],
-  [-4, 1],
-  [-4, -1],
-  [-1, -4],
-];
-
-export const SQUIRREL: Direction[] = [
-  [1, 1],
-  [1, -1],
-  [-1, 1],
-  [-1, -1],
-  [1, 0],
-  [-1, 0],
-  [0, 1],
-  [0, -1],
-];
-
-// You can customize this depending on your variant
-export const PAWN: Direction[] = [[0, 1]];
-
-// Wazir (1,0)
-export const WAZIR: Direction[] = ORTHO;
-
-// Ferz (1,1)
-export const FERZ: Direction[] = DIAG;
+export interface Modifiers {
+  t?: boolean; // take and continue
+  u?: boolean; // unblockable
+  o?: boolean; // must capture first
+  x?: boolean; // must not capture first
+  y?: boolean; // capture then leap
+  p?: boolean; // requires clear path
+  z?: boolean; // zig-zag
+  g?: boolean; // grasshopper movement
+  h?: boolean; // locust movement
+  m?: boolean; // move only
+  c?: boolean; // capture only
+}
 
 export type MoveAtom = {
   kind: "leap" | "slide" | "hop";
 
-  deltas: Direction[];
-  maxSteps: number;
+  deltas: Direction[]; // resolved geometry directions
+  maxSteps: number; // ∞ for slides, 1 for leaps, 1 for hops
 
-  hopCount: number;
+  hopCount: number; // 0 = normal, 1 = grasshopper/locust, >1 = cannon
   hopStyle?: "cannon" | "grasshopper";
 
-  moveOnly: boolean;
-  captureOnly: boolean;
+  moveOnly: boolean; // m
+  captureOnly: boolean; // c
 
   directionsRestricted: boolean;
   allowedDirections?: Direction[];
@@ -144,10 +81,12 @@ export type MoveAtom = {
   captureThenLeap?: boolean; // y
 };
 
-export type SquareState =
-  | { kind: "empty" }
-  | { kind: "friendly"; pieceId?: string }
-  | { kind: "enemy"; pieceId?: string };
+export type SquareKind = "empty" | "friendly" | "enemy";
+
+export type SquareState = {
+  kind: SquareKind;
+  piece?: string;
+};
 
 export type BoardState = {
   width: number;

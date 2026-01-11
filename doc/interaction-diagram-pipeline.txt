@@ -1,0 +1,38 @@
+ ┌──────────────────────────────┐
+ │        GEOMETRY STAGE        │
+ │  (Generate raw squares)      │
+ └──────────────┬───────────────┘
+                │
+                ▼
+ ┌──────────────────────────────┐
+ │      ANNOTATION STAGE        │
+ │  (Attach board occupancy)    │
+ └──────────────┬───────────────┘
+                │
+                ▼
+ ┌───────────────────────────────┐
+ │     PATH FILTERING STAGE      │
+ │  p, o, x, c, m                │
+ │  (Remove illegal path squares)│
+ └──────────────┬────────────────┘
+                │
+                ▼
+ ┌───────────────────────────────┐
+ │     CAPTURE LOGIC STAGE       │
+ │  o, x, c, m, y, g, h          │
+ │  (Interpret captures)         │
+ └──────────────┬────────────────┘
+                │
+                ▼
+ ┌────────────────────────────────┐
+ │    CONTINUATION STAGE          │
+ │  t, u, y                       │
+ │  (Decide whether to keep going)│
+ └──────────────┬─────────────────┘
+                │
+                ▼
+ ┌───────────────────────────────────┐
+ │      LANDING RULES STAGE          │
+ │  o, x, c, m, y, g, h              │
+ │  (Decide if final square is legal)│
+ └───────────────────────────────────┘

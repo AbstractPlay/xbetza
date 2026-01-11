@@ -1,61 +1,36 @@
-import builtIn from "./pieces.json";
-import { Piece, ParsedPiece } from "./types";
-import { parseXBetza } from "./parseXBetza";
+import builtinPieces from "./pieces.json";
+import type { Piece } from "./types";
 
 export class PieceRegistry {
-  private pieces: Map<string, ParsedPiece>;
+  private pieces = new Map<string, Piece>();
 
-  constructor(customPieces: Piece[] = []) {
-    this.pieces = new Map();
+  constructor() {
+    this.loadBuiltinPieces();
+  }
 
-    // Load built‑in pieces
-    for (const p of builtIn.pieces as Piece[]) {
-      this.register(p);
-    }
-
-    // Load custom pieces (override allowed)
-    for (const p of customPieces) {
-      this.register(p);
+  private loadBuiltinPieces() {
+    for (const p of builtinPieces.pieces) {
+      this.registerPiece(p.id, {
+        id: p.id,
+        name: p.name,
+        xbetza: p.xbetza,
+      });
     }
   }
 
-  private validatePiece(p: Piece) {
-    if (!p || typeof p !== "object") {
-      throw new Error("Invalid piece: not an object");
-    }
-    if (typeof p.id !== "string" || !p.id.trim()) {
-      throw new Error(`Invalid piece id: ${JSON.stringify(p)}`);
-    }
-    if (typeof p.name !== "string" || !p.name.trim()) {
-      throw new Error(`Invalid piece name: ${p.id}`);
-    }
-    if (typeof p.xbetza !== "string" || !p.xbetza.trim()) {
-      throw new Error(`Invalid xbetza for piece: ${p.id}`);
-    }
+  registerPiece(id: string, def: Piece) {
+    this.pieces.set(id, def);
   }
 
-  private register(p: Piece) {
-    this.validatePiece(p);
-
-    const atoms = parseXBetza(p.xbetza);
-
-    const parsed: ParsedPiece = {
-      ...p,
-      atoms,
-    };
-
-    this.pieces.set(p.id, parsed);
-  }
-
-  get(id: string): ParsedPiece | undefined {
+  getPiece(id: string): Piece | undefined {
     return this.pieces.get(id);
   }
 
-  getAll(): ParsedPiece[] {
-    return [...this.pieces.values()];
-  }
-
-  has(id: string): boolean {
-    return this.pieces.has(id);
+  /**
+   * Returns the Betza string for this piece.
+   * Geometry-aware deltas are handled by the Betza parser.
+   */
+  getBetza(id: string): string | undefined {
+    return this.pieces.get(id)?.xbetza;
   }
 }

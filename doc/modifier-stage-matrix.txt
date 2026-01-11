@@ -1,0 +1,13 @@
+                GEOM   FILTER   CAPTURE   CONTINUE   LAND
+------------------------------------------------------------
+t (take&cont)     ·       ·        ·        ✔         ·
+u (unblockable)   ·       ·        ·        ✔         ·
+o (must cap)      ·       ✔        ✔         ·        ✔
+x (no cap)        ·       ✔        ✔         ·        ✔
+y (cap→leap)      ·       ·        ✔        ✔         ✔
+p (clear path)    ·       ✔        ·         ·        ·
+z (zig‑zag)       ✔       ·        ·         ·        ·
+g (grasshopper)   ✔       ·        ✔         ·        ✔
+h (locust)        ✔       ·        ✔         ·        ✔
+m (move only)     ·       ✔        ✔         ·        ✔
+c (capture only)  ·       ✔        ✔         ·        ✔
