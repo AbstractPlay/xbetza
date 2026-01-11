@@ -14,8 +14,7 @@
     "dist-prod": "rimraf dist && webpack --mode=production",
     "full-dev": "npm run test && npm run build && npm run dist-dev && npm run deploy",
     "full-prod": "npm run test && npm run build && npm run dist-prod && npm run deploy",
-    "deploy": "shx cp ./playground/playground.* ./dist && npx serverless client deploy --no-confirm --no-delete-contents && aws cloudfront create-invalidation --profile AbstractPlayProd --distribution-id E19KPZXKKYK444 --paths /*",
-    "json2ts": "npx json2ts -i src/schemas/gameinfo.json -o src/schemas/gameinfo.d.ts && npx json2ts -i src/schemas/moveresults.json -o src/schemas/moveresults.d.ts && npx json2ts -i src/games/tafl/ruleset.json -o src/games/tafl/ruleset.d.ts"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "repository": {
     "type": "git",
@@ -44,6 +43,7 @@
     "eslint-plugin-unicorn": "^59.0.1",
     "json-schema-to-typescript": "^15.0.4",
     "mocha": "^11.2.2",
+    "prettier": "^3.7.4",
     "rimraf": "^5.0.1",
     "shx": "^0.4.0",
     "ts-loader": "^9.4.2",

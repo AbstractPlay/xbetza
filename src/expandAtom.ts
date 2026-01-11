@@ -1,7 +1,18 @@
 import type { Direction, MoveAtom } from "./types";
 import {
-  ORTHO, DIAG, KNIGHT, DABBABA, ALFIL, ELEPHANT,
-  CAMEL, ZEBRA, WAZIR, FERZ, GIRAFFE, SQUIRREL, PAWN
+  ORTHO,
+  DIAG,
+  KNIGHT,
+  DABBABA,
+  ALFIL,
+  ELEPHANT,
+  CAMEL,
+  ZEBRA,
+  WAZIR,
+  FERZ,
+  GIRAFFE,
+  SQUIRREL,
+  PAWN,
 } from "./types";
 
 export function expandAtom(
@@ -13,19 +24,18 @@ export function expandAtom(
     directionsRestricted: boolean;
     allowedDirections?: Direction[];
 
-    requiresClearPath: boolean;   // p
-    againRider: boolean;          // a
+    requiresClearPath: boolean; // p
+    againRider: boolean; // a
     hopStyle?: "cannon" | "grasshopper"; // j or g
 
-    zigzag: boolean;              // z
-    takeAndContinue: boolean;     // t
-    unblockable: boolean;         // u
-    mustCaptureFirst: boolean;    // o
+    zigzag: boolean; // z
+    takeAndContinue: boolean; // t
+    unblockable: boolean; // u
+    mustCaptureFirst: boolean; // o
     mustNotCaptureFirst: boolean; // x
-    captureThenLeap: boolean;     // y
-  }
+    captureThenLeap: boolean; // y
+  },
 ): MoveAtom {
-
   // Base fields copied into every MoveAtom
   const base = {
     moveOnly: mods.moveOnly,
@@ -43,7 +53,7 @@ export function expandAtom(
     unblockable: mods.unblockable,
     mustCaptureFirst: mods.mustCaptureFirst,
     mustNotCaptureFirst: mods.mustNotCaptureFirst,
-    captureThenLeap: mods.captureThenLeap
+    captureThenLeap: mods.captureThenLeap,
   };
 
   let result: MoveAtom;
@@ -56,7 +66,12 @@ export function expandAtom(
       result = { kind: "leap", deltas: FERZ, maxSteps: 1, ...base };
       break;
     case "K":
-      result = { kind: "leap", deltas: [...WAZIR, ...FERZ], maxSteps: 1, ...base };
+      result = {
+        kind: "leap",
+        deltas: [...WAZIR, ...FERZ],
+        maxSteps: 1,
+        ...base,
+      };
       break;
 
     case "R":
@@ -66,7 +81,12 @@ export function expandAtom(
       result = { kind: "slide", deltas: DIAG, maxSteps: Infinity, ...base };
       break;
     case "Q":
-      result = { kind: "slide", deltas: [...ORTHO, ...DIAG], maxSteps: Infinity, ...base };
+      result = {
+        kind: "slide",
+        deltas: [...ORTHO, ...DIAG],
+        maxSteps: Infinity,
+        ...base,
+      };
       break;
 
     case "N":

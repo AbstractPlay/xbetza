@@ -13,17 +13,17 @@ export function parseXBetza(x: string): MoveAtom[] {
     let directionsRestricted = false;
     let allowedDirections: Direction[] | undefined = undefined;
 
-    let requiresClearPath = false;   // p
-    let againRider = false;          // a
+    let requiresClearPath = false; // p
+    let againRider = false; // a
     let hopStyle: "cannon" | "grasshopper" | undefined = undefined;
 
     // NEW modifiers
-    let zigzag = false;              // z
-    let takeAndContinue = false;     // t
-    let unblockable = false;         // u
-    let mustCaptureFirst = false;    // o
+    let zigzag = false; // z
+    let takeAndContinue = false; // t
+    let unblockable = false; // u
+    let mustCaptureFirst = false; // o
     let mustNotCaptureFirst = false; // x
-    let captureThenLeap = false;     // y
+    let captureThenLeap = false; // y
 
     //
     // ─────────────────────────────────────────────
@@ -34,47 +34,113 @@ export function parseXBetza(x: string): MoveAtom[] {
       const c = x[i];
 
       // Basic
-      if (c === "m") { moveOnly = true; i++; continue; }
-      if (c === "c") { captureOnly = true; i++; continue; }
+      if (c === "m") {
+        moveOnly = true;
+        i++;
+        continue;
+      }
+      if (c === "c") {
+        captureOnly = true;
+        i++;
+        continue;
+      }
 
       // Hoppers
-      if (c === "j") { hopCount++; hopStyle = "cannon"; i++; continue; }
-      if (c === "g") { hopCount = 1; hopStyle = "grasshopper"; i++; continue; }
+      if (c === "j") {
+        hopCount++;
+        hopStyle = "cannon";
+        i++;
+        continue;
+      }
+      if (c === "g") {
+        hopCount = 1;
+        hopStyle = "grasshopper";
+        i++;
+        continue;
+      }
 
       // Path / rider modifiers
-      if (c === "p") { requiresClearPath = true; i++; continue; }
-      if (c === "a") { againRider = true; i++; continue; }
+      if (c === "p") {
+        requiresClearPath = true;
+        i++;
+        continue;
+      }
+      if (c === "a") {
+        againRider = true;
+        i++;
+        continue;
+      }
 
       // NEW modifiers
-      if (c === "z") { zigzag = true; i++; continue; }
-      if (c === "t") { takeAndContinue = true; i++; continue; }
-      if (c === "u") { unblockable = true; i++; continue; }
-      if (c === "o") { mustCaptureFirst = true; i++; continue; }
-      if (c === "x") { mustNotCaptureFirst = true; i++; continue; }
-      if (c === "y") { captureThenLeap = true; i++; continue; }
+      if (c === "z") {
+        zigzag = true;
+        i++;
+        continue;
+      }
+      if (c === "t") {
+        takeAndContinue = true;
+        i++;
+        continue;
+      }
+      if (c === "u") {
+        unblockable = true;
+        i++;
+        continue;
+      }
+      if (c === "o") {
+        mustCaptureFirst = true;
+        i++;
+        continue;
+      }
+      if (c === "x") {
+        mustNotCaptureFirst = true;
+        i++;
+        continue;
+      }
+      if (c === "y") {
+        captureThenLeap = true;
+        i++;
+        continue;
+      }
 
       // Directional
       if (c === "f") {
         directionsRestricted = true;
-        allowedDirections = [[0,1], [1,1], [-1,1]];
+        allowedDirections = [
+          [0, 1],
+          [1, 1],
+          [-1, 1],
+        ];
         i++;
         continue;
       }
       if (c === "b") {
         directionsRestricted = true;
-        allowedDirections = [[0,-1], [1,-1], [-1,-1]];
+        allowedDirections = [
+          [0, -1],
+          [1, -1],
+          [-1, -1],
+        ];
         i++;
         continue;
       }
       if (c === "l") {
         directionsRestricted = true;
-        allowedDirections = [[-1,0], [-1,1], [-1,-1]];
+        allowedDirections = [
+          [-1, 0],
+          [-1, 1],
+          [-1, -1],
+        ];
         i++;
         continue;
       }
       if (c === "r") {
         directionsRestricted = true;
-        allowedDirections = [[1,0], [1,1], [1,-1]];
+        allowedDirections = [
+          [1, 0],
+          [1, 1],
+          [1, -1],
+        ];
         i++;
         continue;
       }
@@ -109,7 +175,7 @@ export function parseXBetza(x: string): MoveAtom[] {
       unblockable,
       mustCaptureFirst,
       mustNotCaptureFirst,
-      captureThenLeap
+      captureThenLeap,
     });
 
     atoms.push(atom);

@@ -41,7 +41,7 @@ export class PieceRegistry {
 
     const parsed: ParsedPiece = {
       ...p,
-      atoms
+      atoms,
     };
 
     this.pieces.set(p.id, parsed);
