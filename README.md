@@ -65,6 +65,18 @@ get(x: number, y: number): SquareState | undefined
 Where SquareState is:
 `{ kind: "empty" | "friendly" | "enemy", piece?: string }`
 
+You can implement your own board class:
+
+```ts
+class MyBoard {
+  get(x: number, y: number) {
+    // return { kind: "empty" | "friendly" | "enemy" }
+  }
+}
+```
+
+As long as it implements `get(x,y)`, the engine will work.
+
 ## Parsing XBetza
 
 Use `parseXBetza` to convert a Betza string into a piece definition:
@@ -81,7 +93,8 @@ The parser returns a PieceDefinition containing:
 - movement atoms
 - deltas
 - modifiers
-- movement type (slide, leap, hop)
+- geometry classification (`slide`, `leap`, `hop`)
+- maxSteps (∞ for slides, 1 for leaps, hopCount for hops)
 
 You don’t need to inspect this unless you’re extending the engine.
 
@@ -179,19 +192,91 @@ const yN = parseXBetza("yN");
 generateMoves(yN, 4, 4, board);
 ```
 
-## Custom Boards
+## Geometry Support
 
-You can implement your own board class:
+The engine supports multiple board geometries.
+
+By default, `parseXBetza()` assumes square geometry, but you can explicitly request others:
 
 ```ts
-class MyBoard {
-  get(x: number, y: number) {
-    // return { kind: "empty" | "friendly" | "enemy" }
-  }
-}
+parseXBetza("R", { geometry: "square" });
+parseXBetza("R", { geometry: "hex" });
 ```
 
-As long as it implements `get(x,y)`, the engine will work.
+Geometry affects:
+
+- how deltas are interpreted
+- how many directions exist
+- how slides propagate
+- how hops and leaps are resolved
+- how directional modifiers (f, b, l, r) behave
+
+### Hex Geometry
+
+Hex geometry uses six primary directions instead of eight.
+The engine automatically remaps XBetza atoms into hex‑appropriate deltas.
+
+#### Example: Hex Wazir (W)
+
+```ts
+const wazirHex = parseXBetza("W", { geometry: "hex" });
+```
+
+Produces a piece with 6 orthogonal hex directions:
+
+```ts
+[+1, 0], [+1, -1], [0, -1],
+[-1, 0], [-1, +1], [0, +1]
+```
+
+#### Example: Hex Rook (R)
+
+```ts
+const rookHex = parseXBetza("R", { geometry: "hex" });
+```
+
+This becomes a hex‑rider sliding along the same 6 directions.
+
+#### Example: Hex Bishop (B)
+
+```ts
+const bishopHex = parseXBetza("B", { geometry: "hex" });
+```
+
+In hex geometry, “diagonal” movement is not the same as square boards.
+The engine maps B to the other 6 diagonal hex directions (the “off‑axes” directions).
+
+#### Example: Hex Knight (N)
+
+```ts
+const knightHex = parseXBetza("N", { geometry: "hex" });
+```
+
+Hex knights use the standard “(2,1)” axial offsets:
+
+```ts
+[+2, -1], [+1, -2], [-1, -1],
+[-2, +1], [-1, +2], [+1, +1]
+```
+
+### Generating Moves on a Hex Board
+
+You can build a hex board using axial coordinates:
+
+```ts
+const board = {
+  get(x, y) {
+    // return { kind: "empty" | "friendly" | "enemy" }
+  }
+};
+```
+
+Then:
+
+```ts
+const piece = parseXBetza("R", { geometry: "hex" });
+const moves = generateMoves(piece, 0, 0, board);
+```
 
 ## Custom Pieces
 
